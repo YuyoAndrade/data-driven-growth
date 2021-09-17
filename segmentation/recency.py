@@ -12,8 +12,6 @@ import seaborn as sns
 from chart_studio import plotly
 from sklearn.cluster import KMeans
 
-import plotly.graph_objs as go
-
 #load our data from CSV
 tx_data = pd.read_csv('query_segmentation.csv')
 
