@@ -34,31 +34,30 @@ tx_max_purchase["Recency"] = (
 # merge this dataframe to our new user dataframe
 tx_user = pd.merge(tx_user, tx_max_purchase[["pat_id", "Recency"]], on="pat_id")
 
-show_histogram(tx_user["Recency"], "Recency", "Inactivity Days", "Customers")
-
-# Show the information found, mean, min, max, std, percentiles
-print(tx_user.Recency.describe())
-
-# Use Elbow Method to find the optimal amount of clusters
-elbow_method(tx_user[["Recency"]])
-
 # Apply KMeans Clustering, goal is to find groups in the data (with an amount given)
 # Build 3 clusters for recency and add it to dataframe
-
 kmeans = KMeans(n_clusters=3)
+
 kmeans.fit(tx_user[["Recency"]])
 tx_user["RecencyCluster"] = kmeans.predict(tx_user[["Recency"]])
 
-tx_user = order_cluster("RecencyCluster", "Recency", tx_user, False)
+tx_revenue = tx_data.groupby("pat_id").revenue.sum().reset_index()
+tx_revenue.columns = ["pat_id", "Revenue"]
 
-tx_user = tx_user.drop(["pat_id"], axis=1)
+tx_user = pd.merge(tx_user, tx_revenue, on="pat_id")
 
-tx_user = tx_user.groupby(["RecencyCluster"]).agg(
-    {"Recency": ["count", "mean", "std", "min", first_qr, median, third_qr, "max"]}
-)
+kmeans.fit(tx_user[["Revenue"]])
+tx_user["RevenueCluster"] = kmeans.predict(tx_user[["Revenue"]])
 
-tx_user = tx_user.rename(
-    columns={"first_qr": "25%", "median": "50%", "third_qr": "75%"}
-)
+tx_frequency = tx_data.groupby("pat_id").created_at.count().reset_index()
+tx_frequency.columns = ["pat_id", "Frequency"]
+
+tx_user = pd.merge(tx_user, tx_frequency, on="pat_id")
+
+kmeans.fit(tx_user[["Frequency"]])
+tx_user["FrequencyCluster"] = kmeans.predict(tx_user[["Frequency"]])
+
+tx_user['OverallScore'] = tx_user['RecencyCluster'] + tx_user['FrequencyCluster'] + tx_user['RevenueCluster']
+tx_user = tx_user.groupby('OverallScore')['Recency','Frequency','Revenue'].mean()
 
 print(tx_user)

@@ -25,27 +25,12 @@ tx_frequency.columns = ["pat_id", "Frequency"]
 
 tx_user = pd.merge(tx_user, tx_frequency, on="pat_id")
 
-plot_his = plt.hist(tx_user["Frequency"])
-
-plt.title("Frequency")
-plt.xlabel("Frequency")
-plt.ylabel("Customers")
-plt.show()
+show_histogram(tx_user["Frequency"], "Frequency", "Frequency", "Customers")
 
 print(tx_user.Frequency.describe())
 
-# Elbow Method
-sse = {}
-tx_recency = tx_user[['Frequency']]
-for k in range(1, 10):
-    kmeans = KMeans(n_clusters=k, max_iter=1000).fit(tx_recency)
-    tx_recency["clusters"] = kmeans.labels_
-    sse[k] = kmeans.inertia_ 
-
-plt.figure()
-plt.plot(list(sse.keys()), list(sse.values()))
-plt.xlabel("Number of cluster")
-plt.show()
+# Elbow Method 
+elbow_method(tx_user[["Frequency"]])
 
 kmeans = KMeans(n_clusters=3)
 kmeans.fit(tx_user[['Frequency']])

@@ -1,4 +1,6 @@
 import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
 
 # Functions to find percentiles (25, 50, 75)
 
@@ -22,3 +24,26 @@ def order_cluster(cluster_field_name, target_field_name,df,ascending):
     df_final = df_final.drop([cluster_field_name],axis=1)
     df_final = df_final.rename(columns={"index":cluster_field_name})
     return df_final
+
+
+def show_histogram(info, title, xlabel, ylabel):
+    plot_his = plt.hist(info)
+
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.show()
+
+
+def elbow_method(info):
+    sse = {}
+    tx_recency = info
+    for k in range(1, 10):
+        kmeans = KMeans(n_clusters=k, max_iter=1000).fit(tx_recency)
+        tx_recency["clusters"] = kmeans.labels_
+        sse[k] = kmeans.inertia_ 
+
+    plt.figure()
+    plt.plot(list(sse.keys()), list(sse.values()))
+    plt.xlabel("Number of cluster")
+    plt.show()
