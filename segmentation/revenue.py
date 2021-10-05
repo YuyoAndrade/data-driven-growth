@@ -3,13 +3,7 @@ from __future__ import division
 from functions import *
 
 # import libraries
-from datetime import datetime, timedelta
 import pandas as pd
-# %matplotlib inline
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-from chart_studio import plotly
 from sklearn.cluster import KMeans
 
 #load our data from CSV
@@ -32,11 +26,11 @@ print(tx_user.Revenue.describe())
 # Use Elbow Method to find the optimal amount of clusters
 elbow_method(tx_user[["Revenue"]])
 
-kmeans = KMeans(n_clusters=3)
+kmeans = KMeans(n_clusters=4)
 kmeans.fit(tx_user[["Revenue"]])
 tx_user["RevenueCluster"] = kmeans.predict(tx_user[["Revenue"]])
 
-#order the frequency cluster
+#order the revenue cluster
 tx_user = order_cluster("RevenueCluster", "Revenue",tx_user,True)
 
 tx_user.groupby("RevenueCluster")["Revenue"].describe()

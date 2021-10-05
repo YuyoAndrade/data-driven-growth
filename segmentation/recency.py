@@ -3,13 +3,7 @@ from __future__ import division
 from functions import *
 
 # import libraries
-from datetime import datetime, timedelta
 import pandas as pd
-
-# %matplotlib inline
-import numpy as np
-import seaborn as sns
-from chart_studio import plotly
 from sklearn.cluster import KMeans
 
 # load our data from CSV
@@ -45,7 +39,7 @@ elbow_method(tx_user[["Recency"]])
 # Apply KMeans Clustering, goal is to find groups in the data (with an amount given)
 # Build 3 clusters for recency and add it to dataframe
 
-kmeans = KMeans(n_clusters=3)
+kmeans = KMeans(n_clusters=4)
 kmeans.fit(tx_user[["Recency"]])
 tx_user["RecencyCluster"] = kmeans.predict(tx_user[["Recency"]])
 
