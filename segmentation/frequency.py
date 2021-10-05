@@ -3,13 +3,7 @@ from __future__ import division
 from functions import *
 
 # import libraries
-from datetime import datetime, timedelta
 import pandas as pd
-# %matplotlib inline
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-from chart_studio import plotly
 from sklearn.cluster import KMeans
 
 #load our data from CSV
@@ -32,7 +26,7 @@ print(tx_user.Frequency.describe())
 # Elbow Method 
 elbow_method(tx_user[["Frequency"]])
 
-kmeans = KMeans(n_clusters=3)
+kmeans = KMeans(n_clusters=4)
 kmeans.fit(tx_user[['Frequency']])
 tx_user['FrequencyCluster'] = kmeans.predict(tx_user[['Frequency']])
 
